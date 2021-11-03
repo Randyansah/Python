@@ -1,0 +1,36 @@
+import pyttsx3
+import datetime
+engine=pyttsx3.init()
+
+
+voices=engine.getProperty('voices')
+engine.setProperty('rate',130)
+
+engine.setProperty('voice',voices[2])
+
+def Speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+
+
+
+def time():
+    Time=datetime.datetime.now().strftime("%I:%M:%S")
+    Speak("The time is")
+    Speak(Time)
+
+
+def date():
+    year=int(datetime.datetime.now().year)
+    month=int(datetime.datetime.now().month)
+    date=int(datetime.datetime.now().day)
+    Speak("The current dat is")
+    Speak(date)
+    Speak(month)
+    Speak(date)    
+
+
+Speak("I am Randy and I am your AI voice Assistant")
+time()
+date()    
