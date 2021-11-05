@@ -1,5 +1,18 @@
 import pyttsx3
 import datetime
+import speech_recognition as  sr
+import wikipedia
+import smtplib
+import webbrowser
+import os
+import pyautogui
+import psutil
+import pyjokes
+
+
+from wikipedia.wikipedia import search
+
+
 engine=pyttsx3.init()
 
 
@@ -12,14 +25,10 @@ def Speak(audio):
     engine.say(audio)
     engine.runAndWait()
 
-
-
-
 def time():
     Time=datetime.datetime.now().strftime("%I:%M:%S")
     Speak("The time is")
     Speak(Time)
-
 
 def date():
     year=int(datetime.datetime.now().year)
@@ -30,7 +39,136 @@ def date():
     Speak(month)
     Speak(date)    
 
+def hour():
+    hour=datetime.datetime.now().hour
+    Speak("We are in the")    
+    Speak(hour)
+    if hour>=6 and hour<12:
+        Speak("Good Morning")    
+    elif hour>=12 and hour<17:
+        Speak("Good Afternoon")
+    elif hour>=18 and hour<=24:
+        Speak("Good evening ")
+    else:
+        Speak("Good Night") 
 
-Speak("I am Randy and I am your AI voice Assistant")
-time()
-date()    
+def Start():
+    Speak("good morning ,I am Randy Kofi Ansah and I am your AI voice Assistant")
+    
+    time()
+    date()     
+    hour()
+
+def TakeCommand():
+    r=sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening .. . . .  ")
+        r.pause_threshold=1
+        audio=r.listen(source)
+
+    try:
+        print("Recognizing .... ")
+        query=r.recognize_google(audio,"en=US")
+        print(query)
+    except Exception as e:
+        print(e)
+        Speak("Say that again please ......")
+
+        return "None"
+
+
+    return query
+
+def Sendemail(to,content):
+    server=smtplib.SMTP("smtp.gmail.com",547)
+    server.ehlo()
+    server.starttls
+    server.login("sw4919283@gmail.com","ThankGod23")
+    server.sendmail("davarmah@gmail.com",to,content)
+    server.close()
+
+def screenshot():
+    img=pyautogui.screenshot()
+    img.save("usr/bin")
+
+def cpu():
+    usage=str(psutil.cpu_percent)
+    Speak("CPU speed is at" +usage)    
+
+def jokes ():
+    Speak(pyjokes.get_joke())    
+
+
+if __name__=="__main__":
+    Start()
+    query=TakeCommand().lower()
+    print(query)
+
+    while True:
+        if "time" in query:
+            time()
+
+        elif "date" in query:
+            date()
+
+        elif "offline" in query:
+            quit()   
+
+        elif "wikipedia" in query:
+            Speak("Searching. ...")
+            query=query.replace("wikipedia")
+            result=wikipedia.summary(query,sentences=2)
+            Speak(result)
+
+        elif "send email" in query:
+            try:
+                Speak("What should i say")
+                content=TakeCommand()
+                to="davarmah@gmail.com"
+                Sendemail(to,content)
+                Speak("Mail was successfully sent")
+            except Exception as e:
+                Speak(e)
+                Speak("Unable to send Mail")
+        
+        elif "Search in Chrome" in query:
+            Speak("What Should i search")
+            mozillapath="/usr//lib/firefox/firefox.sh"
+            search=TakeCommand()
+            webbrowser.get(mozillapath).open_new_tab(search+".com")
+
+        elif "log out" in query:
+            os.system("shutdown -1")
+        
+        elif "shutdown" in query:
+            os.system("Shutdown /s /t 1")
+
+        elif "restart" in query:
+            os.system("Shutdown /r /t 1")    
+
+        elif "play song" in query:
+            music_dir="home/sicario/Downloads/Telegram Desktop"
+            songs=os.listdir(music_dir)
+            os.startfile(os.join.path(music_dir,songs[0]))
+
+        elif "remember that" in query:
+            Speak("What Should i remember")
+            data=TakeCommand()    
+            Speak("You told me to remember this" + data)
+            remember=open("data.txt","w")
+            remember.write()
+            remember.close()
+
+        elif "do you knowanything" in query:
+            remember=open("data.txt","r")
+            Speak("You told me to remember this" +remember.read())
+
+        elif "screenshot" in query:
+            screenshot()
+            Speak("Done")
+
+        elif "cpu" in query:
+            cpu()    
+
+        elif "jokes" in query:
+            jokes()    
